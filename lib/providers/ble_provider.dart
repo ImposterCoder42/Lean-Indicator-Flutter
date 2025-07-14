@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
+import 'package:active_gauges/models/gauge_setting_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
@@ -93,6 +95,35 @@ class BleController extends StateNotifier<BleState> {
       if (!mounted) return;
       state = state.copyWith(leanAngle: cleanAngle);
     }
+  }
+
+  Future<void> sendGaugeSettings(GaugeSettingsModel settings) async {
+    if (state.connectedDevice == null) {
+      print("Device not connected");
+      return;
+    }
+
+    List<BluetoothService> services = await state.connectedDevice!
+        .discoverServices();
+
+    for (BluetoothService service in services) {
+      for (BluetoothCharacteristic characteristic in service.characteristics) {
+        if (characteristic.uuid == charUuid) {
+          final payload = utf8.encode(settings.toBlePayload());
+
+          try {
+            await characteristic.write(payload, withoutResponse: false);
+            print("Settings sent successfully.");
+          } catch (e) {
+            print("Failed to send settings: $e");
+          }
+
+          return;
+        }
+      }
+    }
+
+    print("Settings characteristic not found.");
   }
 
   Future<void> disconnect() async {

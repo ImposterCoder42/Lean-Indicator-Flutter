@@ -36,8 +36,11 @@ class BleController extends StateNotifier<BleState> {
     _leanProcessor = LeanAngleProcessor();
   }
 
-  final serviceUuid = Guid("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
-  final charUuid = Guid("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+  final serviceUuidLeanAngle = Guid("4fafc201-1fb5-459e-8fcc-c5c9c331914b");
+  final charUuidLeanAngle = Guid("beb5483e-36e1-4688-b7f5-ea07361b26a8");
+
+  final serviceUuidSettings = Guid("9703c1da-f099-4fb7-b7e3-6ac16aae762a");
+  final charUuidSettings = Guid("c8bfda4a-3a28-4ba0-8df5-cbf1a7214cb9");
 
   StreamSubscription<List<int>>? _bleDataSub;
   StreamSubscription<BluetoothConnectionState>? _deviceStateSub;
@@ -52,9 +55,10 @@ class BleController extends StateNotifier<BleState> {
           try {
             await result.device.connect();
             _deviceStateSub = result.device.connectionState.listen((state) {
+              if (!mounted) return;
               state = state;
             });
-
+            if (!mounted) return;
             state = state.copyWith(
               connectedDevice: result.device,
               isConnected: true,
@@ -75,9 +79,9 @@ class BleController extends StateNotifier<BleState> {
   Future<void> _discoverServices(BluetoothDevice device) async {
     List<BluetoothService> services = await device.discoverServices();
     for (BluetoothService service in services) {
-      if (service.uuid == serviceUuid) {
+      if (service.uuid == serviceUuidLeanAngle) {
         for (BluetoothCharacteristic c in service.characteristics) {
-          if (c.uuid == charUuid) {
+          if (c.uuid == charUuidLeanAngle) {
             await c.setNotifyValue(true);
             _bleDataSub = c.onValueReceived.listen(_onDataReceived);
           }
@@ -108,7 +112,7 @@ class BleController extends StateNotifier<BleState> {
 
     for (BluetoothService service in services) {
       for (BluetoothCharacteristic characteristic in service.characteristics) {
-        if (characteristic.uuid == charUuid) {
+        if (characteristic.uuid == charUuidSettings) {
           final payload = utf8.encode(settings.toBlePayload());
 
           try {

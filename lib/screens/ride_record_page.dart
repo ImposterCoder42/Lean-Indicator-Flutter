@@ -26,11 +26,16 @@ class _RideRecordPageState extends ConsumerState<RideRecordPage> {
   @override
   void initState() {
     super.initState();
-    final ble = ref.read(bleProvider);
-    if (ble.connectedDevice == null || !ble.isConnected) {
-      ref.read(bleProvider.notifier).startScanAndConnect();
-    }
-    ref.read(gpsProvider.notifier).startTracking();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final ble = ref.read(bleProvider);
+      if (ble.connectedDevice == null || !ble.isConnected) {
+        ref.read(bleProvider.notifier).startScanAndConnect();
+      }
+
+      ref.read(gpsProvider.notifier).startTracking();
+    });
   }
 
   // ==============
@@ -121,12 +126,6 @@ class _RideRecordPageState extends ConsumerState<RideRecordPage> {
     if (lean < 0) lable = "${lean.abs()}° right";
     if (lean > 0) lable = "${lean.abs()}° left";
     return Text(lable.toUpperCase());
-  }
-
-  @override
-  void dispose() {
-    ref.read(gpsProvider.notifier).stopTracking();
-    super.dispose();
   }
 
   // ==============

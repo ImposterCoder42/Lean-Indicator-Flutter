@@ -1,4 +1,5 @@
 import 'package:active_gauges/providers/gps_provider.dart';
+import 'package:active_gauges/screens/home_page.dart';
 import 'package:active_gauges/widgets/gauge_settings/custom_dropdown_menu.dart';
 import 'package:active_gauges/widgets/gauge_settings/gauge_color_picker_list.dart';
 import 'package:active_gauges/widgets/gauge_settings/number_input.dart';
@@ -103,6 +104,9 @@ class _GaugeStylePageState extends ConsumerState<GaugeStylePage> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('settings sent to gauge')),
                   );
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (_) => HomePage()));
                 },
                 label: const Text("save changes"),
               ),

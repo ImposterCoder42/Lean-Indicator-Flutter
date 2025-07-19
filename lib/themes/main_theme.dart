@@ -36,6 +36,7 @@ final ThemeData darkTheme = ThemeData(
   textTheme: const TextTheme(
     displayLarge: TextStyle(fontSize: 50, fontWeight: FontWeight.normal),
     bodyMedium: TextStyle(fontSize: 40),
+    labelLarge: TextStyle(fontSize: 22),
   ),
   tooltipTheme: TooltipThemeData(
     textStyle: TextStyle(fontSize: 22, fontFamily: 'Marty'),
@@ -81,6 +82,7 @@ final ThemeData lightTheme = ThemeData(
   textTheme: const TextTheme(
     displayLarge: TextStyle(fontSize: 50, fontWeight: FontWeight.normal),
     bodyMedium: TextStyle(fontSize: 40),
+    labelLarge: TextStyle(fontSize: 22),
   ),
   tooltipTheme: TooltipThemeData(
     textStyle: TextStyle(

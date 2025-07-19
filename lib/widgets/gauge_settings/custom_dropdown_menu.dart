@@ -26,7 +26,10 @@ class CustomDropdownMenu extends StatelessWidget {
         if (newValue != null) updateContent(newValue);
       },
       items: workingList.map<DropdownMenuItem<String>>((String option) {
-        return DropdownMenuItem<String>(value: option, child: Text(option));
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Text(option.toUpperCase()),
+        );
       }).toList(),
     );
   }

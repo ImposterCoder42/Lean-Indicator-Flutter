@@ -72,25 +72,29 @@ class _RideRecordPageState extends ConsumerState<RideRecordPage> {
     return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('SAVE RIDE'),
+        title: const Text(style: TextStyle(fontSize: 22), 'SAVE RIDE'),
         content: TextField(
           controller: controller,
           decoration: InputDecoration(
+            labelStyle: TextStyle(fontSize: 20),
             labelText: 'ride name',
             hintText: 'tail of the dragon july 2005',
           ),
         ),
         actions: [
           TextButton(
-            child: const Text('CANCEL'),
+            child: const Text(style: TextStyle(fontSize: 18), 'CANCEL'),
             onPressed: () => Navigator.of(ctx).pop(),
           ),
           TextButton(
-            child: const Text('USE DEFAULT TITLE'),
+            child: const Text(
+              style: TextStyle(fontSize: 18),
+              'USE DEFAULT TITLE',
+            ),
             onPressed: () => Navigator.of(ctx).pop(defaultName),
           ),
           TextButton(
-            child: const Text('SAVE RIDE'),
+            child: const Text(style: TextStyle(fontSize: 18), 'SAVE RIDE'),
             onPressed: () {
               final name = controller.text.trim();
               if (name.isEmpty) {

@@ -130,6 +130,62 @@ class BleController extends StateNotifier<BleState> {
     print("Settings characteristic not found.");
   }
 
+  Future<bool> prReset() async {
+    if (state.connectedDevice == null) {
+      print("Device not connected");
+      return false;
+    }
+
+    List<BluetoothService> services = await state.connectedDevice!
+        .discoverServices();
+
+    for (BluetoothService service in services) {
+      for (BluetoothCharacteristic characteristic in service.characteristics) {
+        if (characteristic.uuid == charUuidSettings) {
+          final payload = utf8.encode("PR_RESET");
+          try {
+            await characteristic.write(payload, withoutResponse: false);
+            print("Settings sent successfully.");
+            return true;
+          } catch (e) {
+            print("Failed to send settings: $e");
+            return false;
+          }
+        }
+      }
+    }
+    print("Settings characteristic not found.");
+    return false;
+  }
+
+  Future<bool> factoryReset() async {
+    if (state.connectedDevice == null) {
+      print("Device not connected");
+      return false;
+    }
+
+    List<BluetoothService> services = await state.connectedDevice!
+        .discoverServices();
+
+    for (BluetoothService service in services) {
+      for (BluetoothCharacteristic characteristic in service.characteristics) {
+        if (characteristic.uuid == charUuidSettings) {
+          final payload = utf8.encode("FACTORY_RESET");
+          try {
+            await characteristic.write(payload, withoutResponse: false);
+            print("Settings sent successfully.");
+            return true;
+          } catch (e) {
+            print("Failed to send settings: $e");
+            return false;
+          }
+        }
+      }
+    }
+    print("Settings characteristic not found.");
+    return false;
+  }
+
   Future<void> disconnect() async {
     if (state.connectedDevice != null) {
       await state.connectedDevice!.disconnect();

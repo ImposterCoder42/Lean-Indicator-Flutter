@@ -36,6 +36,7 @@ class _RideDetailsPageState extends ConsumerState<RideDetailsPage> {
         body: ListView(
           children: [
             Text(
+              style: TextStyle(fontSize: 30),
               "RIDE DATE: ${DateFormat.yMMMMd().format(ride!.date).toUpperCase()}",
             ),
             RideDetailsChart(rideIdx: widget.rideIdx),

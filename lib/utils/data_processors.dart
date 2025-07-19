@@ -39,7 +39,7 @@ class LeanAngleProcessor {
   final CircularBuffer buffer;
   final LowPassFilter filter;
 
-  LeanAngleProcessor({int bufferSize = 10, double alpha = 0.2})
+  LeanAngleProcessor({int bufferSize = 10, double alpha = 0.95})
     : buffer = CircularBuffer(bufferSize),
       filter = LowPassFilter(alpha);
 

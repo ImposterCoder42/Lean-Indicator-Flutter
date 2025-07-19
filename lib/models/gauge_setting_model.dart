@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
-const preLoadedFonts = ["marty", "arial", "script", "text 4", "text 5"];
+const preLoadedFonts = ["factory font", "font 2", "font 3", "font 4", "font 5"];
 
-const preLoadedBikes = [
-  "21 INDIAN SCOUT",
-  "RED-BLUE SPORT",
-  "GREEN SPORT",
-  "BLUE SPORT",
-  "RED BAGGER",
-];
+const preLoadedBikes = ["factory bike", "bike 2", "bike 3", "bike 4", "bike 5"];
 
 class GaugeSettingsModel {
   Color backgroundNormalColor;

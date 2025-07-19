@@ -38,7 +38,7 @@ class _GaugeStylePageState extends ConsumerState<GaugeStylePage> {
     super.initState();
     final ble = ref.read(bleProvider);
     if (ble.connectedDevice == null || !ble.isConnected) {
-      ref.read(bleProvider.notifier).startScanAndConnect();
+      ref.read(bleProvider.notifier).tryReconnectToSavedDevice();
     }
     ref.read(gpsProvider.notifier).startTracking();
   }

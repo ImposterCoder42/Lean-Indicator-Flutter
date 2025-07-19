@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:active_gauges/models/gauge_setting_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/data_processors.dart';
 
 final bleProvider = StateNotifierProvider<BleController, BleState>(
@@ -199,5 +199,73 @@ class BleController extends StateNotifier<BleState> {
   void dispose() {
     disconnect();
     super.dispose();
+  }
+
+  void tryReconnectToSavedDevice() async {
+    final id = await getLastConnectedDeviceId();
+    if (id != null) {
+      final device = BluetoothDevice(remoteId: DeviceIdentifier(id));
+      print("Attempting auto-reconnect to $id");
+
+      for (int i = 0; i < 5; i++) {
+        try {
+          await device.connect(autoConnect: true);
+          state = state.copyWith(connectedDevice: device);
+          print("Reconnected to $id");
+          return;
+        } catch (e) {
+          print("Reconnect attempt ${i + 1} failed: $e");
+          await Future.delayed(Duration(seconds: 2));
+        }
+      }
+      print("Failed to reconnect to $id after 5 attempts");
+    } else {
+      startScanAndConnect();
+    }
+  }
+
+  Future<void> saveLastConnectedDeviceId(String deviceId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('lastDeviceId', deviceId);
+  }
+
+  Future<String?> getLastConnectedDeviceId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('lastDeviceId');
+  }
+
+  Future<void> connectToDevice(BluetoothDevice device) async {
+    try {
+      await device.connect(autoConnect: true);
+      state = state.copyWith(connectedDevice: device);
+      await saveLastConnectedDeviceId(device.remoteId.id);
+
+      // Optional: listen to connection changes
+      device.state.listen((status) {
+        if (status == BluetoothConnectionState.disconnected) {
+          _handleDisconnect(device);
+        }
+      });
+
+      print("Connected to device: ${device.advName}");
+    } catch (e) {
+      print("Connection failed: $e");
+    }
+  }
+
+  void _handleDisconnect(BluetoothDevice device) {
+    print("Disconnected from ${device.remoteId.id}, attempting reconnect...");
+
+    for (int i = 0; i < 3; i++) {
+      Future.delayed(Duration(seconds: 2 * i), () async {
+        try {
+          await device.connect(autoConnect: true);
+          state = state.copyWith(connectedDevice: device);
+          print("Reconnected after disconnect");
+        } catch (e) {
+          print("Reconnect failed: $e");
+        }
+      });
+    }
   }
 }

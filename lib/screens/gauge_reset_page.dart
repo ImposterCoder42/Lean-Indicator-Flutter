@@ -10,6 +10,11 @@ class GaugeResetPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    ref.listen<BleState>(bleProvider, (_, __) {});
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(bleProvider.notifier).tryReconnectToSavedDevice();
+    });
 
     return Container(
       decoration: appGradientBackground(isDark: isDark),

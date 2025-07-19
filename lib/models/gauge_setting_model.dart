@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+
+const preLoadedFonts = ["factory font", "font 2", "font 3", "font 4", "font 5"];
+
+const preLoadedBikes = ["factory bike", "bike 2", "bike 3", "bike 4", "bike 5"];
 
 class GaugeSettingsModel {
   Color backgroundNormalColor;
@@ -20,24 +25,24 @@ class GaugeSettingsModel {
     required this.currentBike,
     required this.maxiumSafeAngle,
   });
-
-  void printSettings() {
-    print(backgroundNormalColor);
-    print(backgroundWarningColor);
-    print(arcMainColor);
-    print(arcIndicatorColor);
-    print(fontColor);
-    print(currentFont);
-    print(currentBike);
-    print(maxiumSafeAngle);
-  }
 }
 
-const preLoadedFonts = ["marty", "arial", "script", "text 4", "text 5"];
-const preLoadedBikes = [
-  "21 INDIAN SCOUT",
-  "RED-BLUE SPORT",
-  "GREEN SPORT",
-  "BLUE SPORT",
-  "RED BAGGER",
-];
+extension GaugeSettingsSerialization on GaugeSettingsModel {
+  Map<String, dynamic> toJson() {
+    String colorToHex(Color c) =>
+        '#${c.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}';
+
+    return {
+      "backgroundNormalColor": colorToHex(backgroundNormalColor),
+      "backgroundWarningColor": colorToHex(backgroundWarningColor),
+      "arcMainColor": colorToHex(arcMainColor),
+      "arcIndicatorColor": colorToHex(arcIndicatorColor),
+      "fontColor": colorToHex(fontColor),
+      "currentFont": currentFont,
+      "currentBike": currentBike,
+      "maxiumSafeAngle": maxiumSafeAngle,
+    };
+  }
+
+  String toBlePayload() => jsonEncode(toJson());
+}

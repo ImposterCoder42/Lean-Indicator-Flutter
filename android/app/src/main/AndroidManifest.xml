@@ -15,6 +15,7 @@
     <application
         android:label="AG Gauges"
         android:name="${applicationName}"
+        android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher">
         <!-- Your existing <activity> stays here, unchanged -->
         <activity

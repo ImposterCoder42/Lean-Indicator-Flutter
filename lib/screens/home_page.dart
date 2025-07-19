@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:active_gauges/themes/shared_decorations.dart';
 import 'package:active_gauges/screens/ride_record_page.dart';
 import 'package:active_gauges/screens/ride_history_page.dart';
 import 'package:active_gauges/screens/gauge_style_page.dart';
 import 'package:active_gauges/screens/gauge_reset_page.dart';
+import 'package:active_gauges/providers/ble_provider.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   void _changePage(BuildContext context, Widget page) {
@@ -14,8 +16,13 @@ class HomePage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    ref.listen<BleState>(bleProvider, (_, __) {});
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(bleProvider.notifier).tryReconnectToSavedDevice();
+    });
 
     return Container(
       decoration: appGradientBackground(isDark: isDark),
